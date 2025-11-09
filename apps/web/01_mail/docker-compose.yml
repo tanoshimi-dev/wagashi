@@ -1,0 +1,16 @@
+version: "3"
+services:
+  mail:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+    environment:
+      MH_STORAGE: maildir
+      MH_MAILDIR_PATH: /tmp
+    networks:
+      - wagashiapp-dev-network
+
+networks:
+  wagashiapp-dev-network:
+    external: true
