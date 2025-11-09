@@ -1,0 +1,222 @@
+import {Platform} from 'react-native';
+import EmulatorDetector from '../constants/EmulatorDetector';
+  
+// Platform-specific check
+const isEmulator = EmulatorDetector.isEmulator();
+const isAndroidEmulator = EmulatorDetector.isAndroidEmulator();
+const isIOSSimulator = EmulatorDetector.isIOSSimulator();
+
+// Platform-specific backend URLs
+const getBackendUrl = () => {
+  if (isEmulator) {
+    if (isIOSSimulator) {
+      return 'http://localhost:10011/'; // iOS simulator
+    } else if (isAndroidEmulator) {
+      //return 'http://192.168.0.154:10011/'; // Android emulator
+      return 'http://10.0.2.2:10011/'; // Android emulator
+    }
+
+  } else {
+    if (Platform.OS === 'ios') {
+      return 'http://192.168.0.154:10011/'; // iOS physical device
+    } else if (Platform.OS === 'android') {
+      return 'http://10.0.2.2:10011/'; // Android physical device
+    }
+  }
+  return 'http://localhost:10011/'; // Default
+};
+
+const BASE_URL = getBackendUrl();
+//const BASE_URL = 'http://10.0.2.2:10011/';
+//const BASE_URL = 'http://localhost:10011/';
+
+//const API_BASE_URL = 'http://10.0.2.2:10011/api/mobile'; 
+const API_BASE_URL = `${BASE_URL}api/mobile`; 
+
+//const API_BASE_URL = 'http://192.168.0.154:10011/api/mobile/user';
+
+  // 物理デバイスから（ローカルPC内の）dockerコンテナへのアドレスは？？
+  // PCでipconfigで表示されたeen0のinetアドレス。（PC ゲートウェイ 192.168.0.1）
+  // スマホのゲートウェイアドレス（スマホゲートウェイ 192.168.0.1）
+  // 同じネットワークにないとダメ
+  // final String baseUrl =
+  //     'http://192.168.0.154:11131/api'; // Replace with your local machine's IP address
+
+  //final String baseUrl = 'http://localhost:11131/api';
+  //final String baseUrl = 'http://172.20.0.5:11131/api';
+
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+// export interface RegisterResponse {
+//   success: boolean;
+//   data?: {
+//     user: {
+//       id: number;
+//       email: string;
+//       name: string;
+//       avatar?: string;
+//     };
+//     token: string;
+//     refreshToken?: string;
+//   };
+//   message?: string;
+// }
+
+export interface RegisterResponse {
+  success: boolean;
+  status: string;
+  data?: {
+    user: {
+      id: number;
+      email: string;
+      name: string;
+      avatar?: string;
+    };
+    token: string;
+    refreshToken?: string;
+  };
+  message?: string;
+}
+
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+// export interface LoginResponse {
+//   success: boolean;
+//   data?: {
+//     user: {
+//       id: number;
+//       email: string;
+//       name: string;
+//       avatar?: string;
+//     };
+//     token: string;
+//     refreshToken?: string;
+//   };
+//   message?: string;
+// }
+
+export interface LoginResponse {
+  user: {
+    id: number;
+    email: string;
+    name: string;
+    avatar?: string;
+  };
+  token: string;
+  message?: string;
+}
+
+export interface ApiError {
+  message: string;
+  statusCode: number;
+}
+
+class AuthService {
+  private async makeRequest(endpoint: string, options: RequestInit = {}): Promise<any> {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+
+
+      const data = await response.json();
+      console.log('AuthService Response:', response);
+
+      if (!response.ok) {
+        throw {
+          message: data.message || 'An error occurred',
+          statusCode: response.status,
+        } as ApiError;
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError) {
+        // Network error
+        throw {
+          message: 'Network error. Please check your connection.',
+          statusCode: 0,
+        } as ApiError;
+      }
+      throw error;
+    }
+  }
+
+  async register(userData: RegisterRequest): Promise<RegisterResponse> {
+    return this.makeRequest('/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async login(credentials: LoginRequest): Promise<LoginResponse> {
+    return this.makeRequest('/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+  }
+
+  async logout(token: string): Promise<void> {
+    return this.makeRequest('/logout', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  }
+
+
+  async emailVerifyResend(email: string, token: string): Promise<{ message: string }> {
+    return this.makeRequest('/email/verification-notification', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async emailVerify(email: string, code: string): Promise<{ message: string }> {
+    return this.makeRequest('/email/verify', {
+      method: 'POST',
+      body: JSON.stringify({ email, verification_code: code }),
+    });
+  }
+
+
+  async refreshToken(refreshToken: string): Promise<{ token: string }> {
+    return this.makeRequest('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+    });
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return this.makeRequest('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    return this.makeRequest('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    });
+  }
+}
+
+export default new AuthService();
