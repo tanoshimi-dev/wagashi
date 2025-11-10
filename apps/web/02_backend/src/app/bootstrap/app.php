@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'admin.auth' => \App\Http\Middleware\AdminAuthenticate::class,
+        ]);
+    })   
+    ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
@@ -29,8 +34,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
         ]);
         
-// ValidateCsrfToken
-
         $middleware->web(append: [
             \App\Http\Middleware\CustomVerifyCsrfToken::class,
         ]);
