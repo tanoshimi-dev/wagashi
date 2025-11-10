@@ -19,10 +19,7 @@ function AppContent() {
   const isEmulator = EmulatorDetector.isEmulator();
   console.log('Running on emulator:', isEmulator);
   
-  // Platform-specific check
-  const isAndroidEmulator = EmulatorDetector.isAndroidEmulator();
-  const isIOSSimulator = EmulatorDetector.isIOSSimulator();
-  
+
   // Get device type
   const deviceType = EmulatorDetector.getDeviceType();
   console.log('Device type:', deviceType);

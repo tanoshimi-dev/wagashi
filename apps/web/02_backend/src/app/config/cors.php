@@ -32,7 +32,12 @@ return [
     // 'supports_credentials' => false,
 
 //    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout', 'user', 'forgot-password'],
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout', 'user', 'forgot-password', 'register'],
+    'paths' => [
+        'api/*', 
+        'sanctum/csrf-cookie', 
+        'login', 'logout', 'user', 'forgot-password', 'register', 
+        'admin/*'
+    ],
     'allowed_methods' => ['*'],
     'allowed_methods' => ['*'],
     'allowed_origins' => ['*'],

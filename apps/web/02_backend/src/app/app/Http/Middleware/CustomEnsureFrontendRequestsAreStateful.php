@@ -15,7 +15,7 @@ class CustomEnsureFrontendRequestsAreStateful extends Middleware
     protected function addCookieToResponse($request, $response)
     
     {
-        $cookieName = 'STOREAPP-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
+        $cookieName = 'WAGASHI-' . (env('APP_ENV') ? '-' . env('APP_ENV') : ''). 'XSRF-TOKEN';
 
         $config = config('session');
     error_log("CustomEnsureFrontendRequestsAreStateful CALLED: addCookieToResponse");

@@ -14,7 +14,7 @@ export const SignIn: React.FC = () => {
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   
-  const [email, setEmail] = useState('rehop.dev@gmail.com');
+  const [email, setEmail] = useState('urehop.dev@gmail.com');
   const [password, setPassword] = useState('rehop.dev');
   const [rememberMe, setRememberMe] = useState(false);
 

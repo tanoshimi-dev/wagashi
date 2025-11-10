@@ -25,3 +25,4 @@ Route::get('/', function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/admin_auth.php'; // 管理者認証ルートを追加
