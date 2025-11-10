@@ -19,8 +19,8 @@ const getBackendUrl = () => {
     if (isIOSSimulator) {
       return 'http://localhost:10011/'; // iOS simulator
     } else if (isAndroidEmulator) {
-      //return 'http://192.168.0.154:10011/'; // Android emulator
-      return 'http://10.0.2.2:10011/'; // Android emulator
+      return 'http://192.168.0.154:10011/'; // Android emulator
+      //return 'http://10.0.2.2:10011/'; // Android emulator
     }
 
   } else {

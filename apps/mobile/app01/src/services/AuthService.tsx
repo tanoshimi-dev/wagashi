@@ -1,38 +1,9 @@
-import {Platform} from 'react-native';
 import EmulatorDetector from '../constants/EmulatorDetector';
-  
-// Platform-specific check
-const isEmulator = EmulatorDetector.isEmulator();
-const isAndroidEmulator = EmulatorDetector.isAndroidEmulator();
-const isIOSSimulator = EmulatorDetector.isIOSSimulator();
 
-// Platform-specific backend URLs
-const getBackendUrl = () => {
-  if (isEmulator) {
-    if (isIOSSimulator) {
-      return 'http://localhost:10011/'; // iOS simulator
-    } else if (isAndroidEmulator) {
-      //return 'http://192.168.0.154:10011/'; // Android emulator
-      return 'http://10.0.2.2:10011/'; // Android emulator
-    }
+const BASE_URL = EmulatorDetector.getAPIUrl();
+const API_BASE_URL = `${BASE_URL}/api/mobile`; 
 
-  } else {
-    if (Platform.OS === 'ios') {
-      return 'http://192.168.0.154:10011/'; // iOS physical device
-    } else if (Platform.OS === 'android') {
-      return 'http://10.0.2.2:10011/'; // Android physical device
-    }
-  }
-  return 'http://localhost:10011/'; // Default
-};
-
-const BASE_URL = getBackendUrl();
-//const BASE_URL = 'http://10.0.2.2:10011/';
-//const BASE_URL = 'http://localhost:10011/';
-
-//const API_BASE_URL = 'http://10.0.2.2:10011/api/mobile'; 
-const API_BASE_URL = `${BASE_URL}api/mobile`; 
-
+console.log(`API_BASE_URL: ${API_BASE_URL}`);
 //const API_BASE_URL = 'http://192.168.0.154:10011/api/mobile/user';
 
   // 物理デバイスから（ローカルPC内の）dockerコンテナへのアドレスは？？

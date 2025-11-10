@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import {API_URL_ANDROID, API_URL_ANDROID_EMULATOR, API_URL_IOS, API_URL_IOS_SIMULATOR, ENV} from '@env';
 
 /**
  * Manual Emulator/Simulator Detection
@@ -120,9 +121,9 @@ class EmulatorDetector {
     productionUrl?: string;
   } = {}) {
     const {
-      androidEmulatorUrl = 'http://10.0.2.2:10011',
-      iosSimulatorUrl = 'http://localhost:10011',
-      realDeviceUrl = 'http://192.168.1.100:10011', // Your local IP
+      androidEmulatorUrl = API_URL_ANDROID_EMULATOR,
+      iosSimulatorUrl = API_URL_IOS_SIMULATOR,
+      realDeviceUrl = API_URL_ANDROID,
       productionUrl = 'https://api.production.com',
     } = config;
 

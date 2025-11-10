@@ -17,32 +17,6 @@ type Props = {
 };
 
 
-  
-// Platform-specific check
-const isEmulator = EmulatorDetector.isEmulator();
-const isAndroidEmulator = EmulatorDetector.isAndroidEmulator();
-const isIOSSimulator = EmulatorDetector.isIOSSimulator();
-
-// Platform-specific backend URLs
-const getBackendUrl = () => {
-  if (isEmulator) {
-    if (isIOSSimulator) {
-      return 'http://localhost:10011/'; // iOS simulator
-    } else if (isAndroidEmulator) {
-      console.log('Using Android emulator backend URL');
-      // return 'http://192.168.0.154:10011/'; // Android emulator
-      return 'http://10.0.2.2:10011/'; // Android emulator
-    }
-
-  } else {
-    if (Platform.OS === 'ios') {
-      return 'http://192.168.0.154:10011/'; // iOS physical device
-    } else if (Platform.OS === 'android') {
-      return 'http://10.0.2.2:10011/'; // Android physical device
-    }
-  }
-  return 'http://localhost:10011/'; // Default
-};
 
 export const SweetItem: React.FC<Props> = ({sweet}) => {
   const dispatch = hooks.useAppDispatch();
@@ -52,8 +26,8 @@ export const SweetItem: React.FC<Props> = ({sweet}) => {
   const {list: wishlist} = hooks.useAppSelector(state => state.wishlistReducer);
 
 
-
-  const BASE_URL = getBackendUrl();
+  // const BASE_URL = getBackendUrl();
+  const BASE_URL = EmulatorDetector.getAPIUrl();
   //const BASE_URL = 'http://10.0.2.2:10011/';
   //const BASE_URL = 'http://localhost:10011/';
 
@@ -78,7 +52,7 @@ export const SweetItem: React.FC<Props> = ({sweet}) => {
       <Image 
         // source={{uri: `http://192.168.0.154:10011/storage/products/${sweet.id}.png?${Date.now()}`}}
         // source={{uri: `http://10.0.2.2:10011/storage/products/${sweet.id}.png?${Date.now()}`}}
-        source={{uri: `${BASE_URL}storage/products/${sweet.id}.png?${Date.now()}`}}
+        source={{uri: `${BASE_URL}/storage/products/${sweet.id}.png?${Date.now()}`}}
         style={{width: '100%', height: 120, borderRadius: 10}}
         resizeMode="cover"
       />
