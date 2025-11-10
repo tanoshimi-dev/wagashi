@@ -19,7 +19,7 @@ class CustomVerifyCsrfToken extends Middleware
     protected function getTokenFromRequest($request)
     {
 
-        $headerName = 'STOREAPP-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
+        $headerName = 'WAGASHI-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
 
         error_log("★★★ headerName: " . $headerName);
         error_log("★★★ getTokenFromRequest called for: " . $request->url());
@@ -99,7 +99,7 @@ class CustomVerifyCsrfToken extends Middleware
 
     protected function addCookieToResponse($request, $response)
     {
-        $cookieName = 'STOREAPP-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
+        $cookieName = 'WAGASHI-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
 
         $config = config('session');
         error_log("★★★ cookieName: " . $cookieName);
