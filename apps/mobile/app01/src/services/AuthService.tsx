@@ -1,4 +1,5 @@
 import EmulatorDetector from '../constants/EmulatorDetector';
+import auth from '@react-native-firebase/auth';
 
 const BASE_URL = EmulatorDetector.getAPIUrl();
 const API_BASE_URL = `${BASE_URL}/api/mobile`; 
@@ -140,6 +141,8 @@ class AuthService {
     });
   }
 
+ 
+  
   async logout(token: string): Promise<void> {
     return this.makeRequest('/logout', {
       method: 'POST',
