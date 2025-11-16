@@ -151,42 +151,13 @@ export const SignIn: React.FC = () => {
     }
 
     setLoading(true);
-    
-    // console.log('Attempting login with:', { email, password });
 
     try {
-      // await login({ email: email.toLowerCase().trim(), password });
-      //await login({ email: email.toLowerCase().trim(), password });
-      
-      // const userCredential = await auth().signInWithEmailAndPassword(
-      //   email,
-      //   password
-      // );
-      
-      const userCredential = await loginBaas(
+
+      await loginBaas(
         email.toLowerCase().trim(),
         password
       );
-
-      console.log('Firebase User Credential:', userCredential);
-
-      // Check if email is verified
-      if (!userCredential.user.emailVerified) {
-        return {
-          success: false,
-          message: 'Please verify your email first',
-          needsVerification: true
-        };
-      }
-      
-      // Get ID token to send to Laravel backend
-      const idToken = await userCredential.user.getIdToken();
-      
-      return {
-        success: true,
-        user: userCredential.user,
-        idToken
-      };
 
       // Navigation will happen automatically via AuthContext
     } catch (error) {

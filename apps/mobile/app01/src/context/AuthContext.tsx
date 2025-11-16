@@ -239,11 +239,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 
       // if (response.success && response.data) {
-      if (response && response.token && response.user) {
+      if (response && response.idToken && response.user) {
         // const { user: userData, token: authToken, refreshToken } = response.data;
         //const { user: userData, token: authToken } = response.data;
         const userData = response.user;
-        const authToken = response.token;
+        const authToken = response.idToken;
         
         console.log('JSON.stringify: userData', JSON.stringify(userData));
         // Store auth data
