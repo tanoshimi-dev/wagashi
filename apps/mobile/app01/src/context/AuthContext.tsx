@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import authService, { LoginRequest, RegisterRequest, ApiError } from '../services/AuthService';
+import authService, { LoginRequest, RegisterRequest, ApiError
+ } from '../services/AuthService';
 
 interface User {
   id: number;
@@ -20,6 +21,7 @@ interface AuthContextType {
   register: (userData: RegisterRequest) => Promise<void>;
   emailVerify: (email: string, code: string) => Promise<void>;
   emailVerifyResend: (email: string) => Promise<void>;
+  loginBaas: (email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,6 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: LoginRequest): Promise<void> => {
     try {
       const response = await authService.login(credentials);
+      //const response = await authService.loginBaas(credentials.email, credentials.password);
       console.log('Login successful: response', response);
 
 
@@ -228,6 +231,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginBaas = async (email: string, password: string): Promise<void> => {
+    try {
+      //const response = await authService.login(credentials);
+      const response = await authService.loginBaas(email, password);
+      console.log('Login Baas successful: response', response);
+
+
+      // if (response.success && response.data) {
+      if (response && response.token && response.user) {
+        // const { user: userData, token: authToken, refreshToken } = response.data;
+        //const { user: userData, token: authToken } = response.data;
+        const userData = response.user;
+        const authToken = response.token;
+        
+        console.log('JSON.stringify: userData', JSON.stringify(userData));
+        // Store auth data
+        await AsyncStorage.setItem(TOKEN_KEY, authToken);
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+        
+        // if (refreshToken) {
+        //   await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+        // }
+
+        // Update state
+        setUser(userData);
+        setToken(authToken);
+
+        
+      } else {
+        throw new Error(response.message || 'Login failed');
+      }
+    } catch (error) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.message || 'Login failed');
+    }
+  };
+
 
   const value: AuthContextType = {
     user,
@@ -239,6 +279,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     emailVerify,
     emailVerifyResend,
+    loginBaas,
   };
 
   return (

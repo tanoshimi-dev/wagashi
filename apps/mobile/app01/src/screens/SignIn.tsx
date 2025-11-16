@@ -11,7 +11,7 @@ import auth from '@react-native-firebase/auth';
   
 export const SignIn: React.FC = () => {
   const navigation = hooks.useAppNavigation();
-  const { login, loginWithFirebaseToken } = useAuth();
+  const { login, loginWithFirebaseToken, loginBaas } = useAuth();
   const [loading, setLoading] = useState(false);
   
   const [email, setEmail] = useState('urehop.dev@gmail.com');
@@ -104,7 +104,6 @@ export const SignIn: React.FC = () => {
         <components.Button
           title="Sign In"
           onPress={() => {
-            // navigation.navigate(constants.routes.RootLayout, {screen: 'home'});
             handleLogin();
           }}
           style={{width: '100%'}}
@@ -153,17 +152,24 @@ export const SignIn: React.FC = () => {
 
     setLoading(true);
     
-    //console.log('Attempting login with:', { email, password });
+    // console.log('Attempting login with:', { email, password });
 
     try {
       // await login({ email: email.toLowerCase().trim(), password });
       //await login({ email: email.toLowerCase().trim(), password });
       
-      const userCredential = await auth().signInWithEmailAndPassword(
-        email,
+      // const userCredential = await auth().signInWithEmailAndPassword(
+      //   email,
+      //   password
+      // );
+      
+      const userCredential = await loginBaas(
+        email.toLowerCase().trim(),
         password
       );
-      
+
+      console.log('Firebase User Credential:', userCredential);
+
       // Check if email is verified
       if (!userCredential.user.emailVerified) {
         return {

@@ -34,7 +34,7 @@ export const Button: React.FC<Props> = ({
         justifyContent: 'center',
         backgroundColor: disabled
           ? constants.colors.lightGrayColor || '#E0E0E0'
-          : constants.colors.seaGreenColor || '#2AA876',
+          : constants.colors.orangeColor || '#fdc703ff',
         borderRadius: 10,
         height: 50,
         paddingHorizontal: 24,

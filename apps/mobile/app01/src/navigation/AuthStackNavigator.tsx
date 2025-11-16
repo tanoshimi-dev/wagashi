@@ -27,14 +27,6 @@ export const AuthStackNavigator = () => {
         name="SignUp" 
         component={screens.SignUp}
       />
-      {/* <Stack.Screen 
-        name="EmailVerification" 
-        component={EmailVerificationScreen}
-      />
-      <Stack.Screen 
-        name="PasswordReset" 
-        component={PasswordResetScreen}
-      /> */}
     </Stack.Navigator>
   );
 };
