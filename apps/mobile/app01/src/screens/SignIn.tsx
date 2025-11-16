@@ -7,11 +7,10 @@ import {constants} from '@/constants';
 import {components} from '@/components';
 
 import { useAuth } from '@/context/AuthContext';
-import auth from '@react-native-firebase/auth';
-  
+
 export const SignIn: React.FC = () => {
   const navigation = hooks.useAppNavigation();
-  const { login, loginWithFirebaseToken, loginBaas } = useAuth();
+  const { loginBaas } = useAuth();
   const [loading, setLoading] = useState(false);
   
   const [email, setEmail] = useState('urehop.dev@gmail.com');
@@ -41,7 +40,7 @@ export const SignIn: React.FC = () => {
             fontSize: 22,
             marginBottom: 10,
             textAlign: 'center',
-            color: constants.colors.seaGreenColor,
+            color: constants.colors.orangeColor,
           }}
         >
           Welcome Back John!
@@ -133,7 +132,7 @@ export const SignIn: React.FC = () => {
           <Text
             style={{
               fontWeight: 500,
-              color: constants.colors.seaGreenColor,
+              color: constants.colors.orangeColor,
               ...constants.typography.Roboto_Regular,
             }}
           >

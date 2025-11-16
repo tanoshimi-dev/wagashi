@@ -37,10 +37,10 @@ export const SignUp: React.FC = () => {
           fontSize: 22,
           marginBottom: 10,
           textAlign: 'center',
-          color: constants.colors.seaGreenColor,
+          color: constants.colors.orangeColor,
         }}
       >
-        Welcome To Mesio!
+        Welcome To Wagashi App!
       </Text>
       <Text
         style={{
@@ -140,7 +140,7 @@ export const SignUp: React.FC = () => {
         <Text
           style={{
             fontWeight: 500,
-            color: constants.colors.seaGreenColor,
+            color: constants.colors.orangeColor,
             ...constants.typography.Roboto_Regular,
           }}
         >

@@ -15,7 +15,7 @@ export const Checkbox: React.FC<Props> = ({checked}) => {
         width: 16,
         height: 16,
         borderWidth: 1,
-        borderColor: constants.colors.seaGreenColor,
+        borderColor: constants.colors.orangeColor,
         borderRadius: 3,
         borderStyle: 'solid',
         ...constants.flex.rowAlignCenterCenter,
