@@ -1,18 +1,20 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {hooks} from '@/hooks';
 import {constants} from '@/constants';
 import {components} from '@/components';
 
+import { useAuth } from '@/context/AuthContext';
+
 export const SignUp: React.FC = () => {
   const navigation = hooks.useAppNavigation();
-
+  const { registerBaas } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
@@ -55,8 +57,8 @@ export const SignUp: React.FC = () => {
       </Text>
       <components.InputField
         placeholder="Name"
-        value={fullName}
-        onChangeText={setFullName}
+        value={name}
+        onChangeText={setName}
         keyboardType="default"
         autoCapitalize="words"
         style={{marginBottom: 15, width: '100%'}}
@@ -107,7 +109,8 @@ export const SignUp: React.FC = () => {
       <components.Button
         title="Sign Up"
         onPress={() => {
-          navigation.navigate(constants.routes.verifyYourPhoneNumber);
+          //navigation.navigate(constants.routes.verifyYourPhoneNumber);
+          handleSignUp();
         }}
         style={{width: '100%'}}
       />
@@ -141,6 +144,43 @@ export const SignUp: React.FC = () => {
       </TouchableOpacity>
     </View>
   );
+
+  const handleSignUp = async () => {
+    if (!email || !password ) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    //setLoading(true);
+
+    try {
+
+      const result = await registerBaas(
+        email.toLowerCase().trim(),
+        password
+      );
+
+      console.log('SignUp Result:', result);
+
+      navigation.navigate(constants.routes.verifyUser, { email: email.toLowerCase().trim() });
+
+      // Navigation will happen automatically via AuthContext
+    } catch (error) {
+      console.error('Login error:', error);
+      let errorMessage = 'Invalid credentials. Please try again.';
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = String((error as { message?: string }).message) || errorMessage;
+      }
+      Alert.alert(
+        'Login Failed', 
+        errorMessage,
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setLoading(false);
+    }
+  
+  };
 
   return (
     <components.SafeAreaView>

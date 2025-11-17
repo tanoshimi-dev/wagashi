@@ -27,6 +27,11 @@ export const AuthStackNavigator = () => {
         name="SignUp" 
         component={screens.SignUp}
       />
+      <Stack.Screen
+        name={constants.routes.verifyUser}
+        component={screens.VerifyUser}
+        options={{headerShown: false}}
+      />      
     </Stack.Navigator>
   );
 };

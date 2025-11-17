@@ -27,7 +27,7 @@ export const routes = {
   orderSuccessful: 'OrderSuccessful',
   confirmationCode: 'ConfirmationCode',
   myPromocodesEmpty: 'MyPromocodesEmpty',
-  verifyYourPhoneNumber: 'VerifyYourPhoneNumber',
+  verifyUser: 'VerifyUser',
   forgotPasswordSentEmail: 'ForgotPasswordSentEmail',
 
   products: 'Products',

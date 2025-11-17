@@ -237,7 +237,7 @@ class AuthService {
 
   }
 
-  async registerFirebaseUser(email: string, password: string, name: string): Promise<any> {
+  async registerFirebaseUser(email: string, password: string): Promise<any> {
     try {
       
       const userCredential = await auth().createUserWithEmailAndPassword(
@@ -247,15 +247,6 @@ class AuthService {
       
       console.log('Firebase User Credential:', userCredential);
 
-      // Check if email is verified
-      // if (!userCredential.user.emailVerified) {
-      //   return {
-      //     success: false,
-      //     message: 'Please verify your email first',
-      //     needsVerification: true
-      //   };
-      // }
-      
       // Get ID token to send to Laravel backend
       const idToken = await userCredential.user.getIdToken();
       

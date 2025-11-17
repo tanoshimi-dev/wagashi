@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService, { LoginRequest, RegisterRequest, ApiError
  } from '../services/AuthService';
+import { constants } from '@/constants';
 
 interface User {
   id: number;
@@ -22,6 +23,7 @@ interface AuthContextType {
   emailVerify: (email: string, code: string) => Promise<void>;
   emailVerifyResend: (email: string) => Promise<void>;
   loginBaas: (email: string, password: string) => Promise<void>;
+  registerBaas: (email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -268,6 +270,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const registerBaas = async (email: string, password: string): Promise<void> => {
+    try {
+      const response = await authService.registerFirebaseUser(email, password);
+      
+      console.log('AuthContext Response:', response);
+
+      if (response.success && response.idToken && response.user) {
+        // const { user: newUser, token: authToken, refreshToken } = response.data;
+        // const { user: newUser, token: authToken } = response.data;
+
+        // // Store auth data
+        // await AsyncStorage.setItem(TOKEN_KEY, response.idToken);
+        // await AsyncStorage.setItem(USER_KEY, JSON.stringify(response.user));
+
+        // setUser(newUser);
+        // setToken(authToken);
+        return response;
+
+      } else {
+        throw new Error(response.message || 'Registration failed');
+      }
+    } catch (error) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.message || 'Registration failed');
+    }
+  };
 
   const value: AuthContextType = {
     user,
@@ -280,6 +308,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     emailVerify,
     emailVerifyResend,
     loginBaas,
+    registerBaas,
   };
 
   return (

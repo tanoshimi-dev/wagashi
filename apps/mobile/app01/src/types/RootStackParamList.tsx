@@ -12,7 +12,7 @@ export type RootStackParamList = {
   Notifications: undefined;
   ForgotPassword: undefined;
   RootLayout: {screen: string};
-  VerifyYourPhoneNumber: undefined;
+  VerifyUser: { email: string };
   ShopCategory: {category: string};
   OrderSuccessful: undefined;
   ConfirmationCode: undefined;

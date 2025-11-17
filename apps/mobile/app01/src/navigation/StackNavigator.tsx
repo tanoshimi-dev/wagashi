@@ -10,18 +10,6 @@ import {RootLayout} from '@/tabs/_layout';
 export const StackNavigator: React.FC = () => {
   return (
     <Stack.Navigator>
-      {/* <Stack.Screen
-        name={constants.routes.onboarding}
-        component={screens.Onboarding}
-        options={{headerShown: false}}
-      /> */}
-
-      {/* <Stack.Screen
-        name={constants.routes.signIn}
-        component={screens.SignIn}
-        options={{headerShown: false}}
-      /> */}
-
 
       <Stack.Screen
         name={'RootLayout'}
@@ -104,11 +92,11 @@ export const StackNavigator: React.FC = () => {
         component={screens.ConfirmationCode}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name={constants.routes.verifyYourPhoneNumber}
-        component={screens.VerifyYourPhoneNumber}
+      {/* <Stack.Screen
+        name={constants.routes.verifyUser}
+        component={screens.VerifyUser}
         options={{headerShown: false}}
-      />
+      /> */}
       <Stack.Screen
         name={constants.routes.reviews}
         component={screens.Reviews}

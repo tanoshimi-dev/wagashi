@@ -103,7 +103,7 @@ export const SignIn: React.FC = () => {
         <components.Button
           title="Sign In"
           onPress={() => {
-            handleLogin();
+            handleSignIn();
           }}
           style={{width: '100%'}}
         />
@@ -143,7 +143,7 @@ export const SignIn: React.FC = () => {
     );
   };
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;

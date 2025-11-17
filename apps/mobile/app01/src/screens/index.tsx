@@ -19,7 +19,7 @@ import {AccountCreated} from '@/screens/AccountCreated';
 import {OrderSuccessful} from '@/screens/OrderSuccessful';
 import {ConfirmationCode} from '@/screens/ConfirmationCode';
 import {MyPromocodesEmpty} from '@/screens/MyPromocodesEmpty';
-import {VerifyYourPhoneNumber} from '@/screens/VerifyYourPhoneNumber';
+import {VerifyUser} from '@/screens/VerifyUser';
 import {ForgotPasswordSentEmail} from '@/screens/ForgotPasswordSentEmail';
 
 
@@ -49,7 +49,7 @@ export const screens = {
   OrderSuccessful,
   ConfirmationCode,
   MyPromocodesEmpty,
-  VerifyYourPhoneNumber,
+  VerifyUser,
   ForgotPasswordSentEmail,
   
   SweetsDetail,
