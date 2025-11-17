@@ -193,7 +193,7 @@ class AuthService {
 
 
 
-  async loginBaas(email: string, password: string, options: RequestInit = {}): Promise<any> {
+  async signInFirebase(email: string, password: string): Promise<any> {
     try {
       
       const userCredential = await auth().signInWithEmailAndPassword(
@@ -233,8 +233,51 @@ class AuthService {
       
     }
 
+    
+
   }
 
+  async registerFirebaseUser(email: string, password: string, name: string): Promise<any> {
+    try {
+      
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      
+      console.log('Firebase User Credential:', userCredential);
+
+      // Check if email is verified
+      // if (!userCredential.user.emailVerified) {
+      //   return {
+      //     success: false,
+      //     message: 'Please verify your email first',
+      //     needsVerification: true
+      //   };
+      // }
+      
+      // Get ID token to send to Laravel backend
+      const idToken = await userCredential.user.getIdToken();
+      
+      return {
+        success: true,
+        user: userCredential.user,
+        idToken
+      };      
+
+      // Navigation will happen automatically via AuthContext
+    } catch (error) {
+      console.error('Login error:', error);
+      let errorMessage = 'Invalid credentials. Please try again.';
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = String((error as { message?: string }).message) || errorMessage;
+      }
+    
+    } finally {
+      
+    }
+
+  }
 
 }
 

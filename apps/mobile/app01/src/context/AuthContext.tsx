@@ -234,7 +234,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginBaas = async (email: string, password: string): Promise<void> => {
     try {
       //const response = await authService.login(credentials);
-      const response = await authService.loginBaas(email, password);
+      const response = await authService.signInFirebase(email, password);
       console.log('Login Baas successful: response', response);
 
 

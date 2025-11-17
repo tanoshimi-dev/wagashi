@@ -54,19 +54,11 @@ export const SignUp: React.FC = () => {
         Sign up to continue
       </Text>
       <components.InputField
-        placeholder="Full Name"
+        placeholder="Name"
         value={fullName}
         onChangeText={setFullName}
         keyboardType="default"
         autoCapitalize="words"
-        style={{marginBottom: 15, width: '100%'}}
-      />
-      <components.InputField
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-        autoCapitalize="none"
         style={{marginBottom: 15, width: '100%'}}
       />
       <components.InputField
