@@ -20,10 +20,10 @@ interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
-  emailVerify: (email: string, code: string) => Promise<void>;
-  emailVerifyResend: (email: string) => Promise<void>;
   loginBaas: (email: string, password: string) => Promise<void>;
   registerBaas: (email: string, password: string) => Promise<void>;
+  registerLaravel: (idToken: string) => Promise<void>;
+  verifyEmail: (email: string, otpCode: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -168,72 +168,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const emailVerifyResend = async (email: string): Promise<void> => {
-    // Implement email verification logic here
-    const storedToken = await AsyncStorage.getItem(TOKEN_KEY);
-    console.log('Using stored token for email verify resend:', storedToken);
-    console.log('Resending email verification to:', email);
-
-    try {
-      const response = await authService.emailVerifyResend(email, storedToken || '');
-
-      console.log('AuthContext Response:', response);
-
-      if (response.status === "success" ) {
-        // const { user: newUser, token: authToken, refreshToken } = response.data;
-        // const { user: newUser, token: authToken } = response.data;
-        
-        // // Store auth data
-        // await AsyncStorage.setItem(TOKEN_KEY, authToken);
-        // await AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
-        
-
-        // setUser(newUser);
-        // setToken(authToken);
-
-//        navigation.navigate('EmailVerification', { email });
-
-      } else {
-        throw new Error(response.message || 'Registration failed');
-      }
-    } catch (error) {
-      const apiError = error as ApiError;
-      throw new Error(apiError.message || 'Registration failed');
-    }
-  };
-
-  const emailVerify = async (email: string,code: string): Promise<void> => {
-    // Implement email verification logic here
-    console.log('Verifying email with code:', code);
-    try {
-      const response = await authService.emailVerify(email, code);
-
-      console.log('AuthContext Response:', response);
-
-      if (response.status === "success" && response.data) {
-        // const { user: newUser, token: authToken, refreshToken } = response.data;
-        const { user: newUser, token: authToken } = response.data;
-        
-        // Store auth data
-        await AsyncStorage.setItem(TOKEN_KEY, authToken);
-        await AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
-        
-
-        setUser(newUser);
-        setToken(authToken);
-
-        // navigation.navigate('Home');
-
-      } else {
-        throw new Error(response.message || 'Registration failed');
-      }
-    } catch (error) {
-      const apiError = error as ApiError;
-      throw new Error(apiError.message || 'Registration failed');
-    }
-  };
-
-  const loginBaas = async (email: string, password: string): Promise<void> => {
+  async function loginBaas(email: string, password: string): Promise<void> {
     try {
       //const response = await authService.login(credentials);
       const response = await authService.signInFirebase(email, password);
@@ -246,21 +181,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         //const { user: userData, token: authToken } = response.data;
         const userData = response.user;
         const authToken = response.idToken;
-        
+
         console.log('JSON.stringify: userData', JSON.stringify(userData));
         // Store auth data
         await AsyncStorage.setItem(TOKEN_KEY, authToken);
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
-        
-        // if (refreshToken) {
-        //   await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-        // }
 
-        // Update state
         setUser(userData);
         setToken(authToken);
 
-        
+
       } else {
         throw new Error(response.message || 'Login failed');
       }
@@ -268,7 +198,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const apiError = error as ApiError;
       throw new Error(apiError.message || 'Login failed');
     }
-  };
+  }
 
   const registerBaas = async (email: string, password: string): Promise<void> => {
     try {
@@ -297,6 +227,61 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const registerLaravel = async (idToken: string): Promise<void> => {
+    try {
+      const response = await authService.registerLaravel(idToken);
+      
+      console.log('AuthContext Response:', response);
+
+      if (response.status == "success" && response.data ) {
+        return response;
+
+      } else {
+        throw new Error(response.message || 'Registration failed');
+      }
+    } catch (error) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.message || 'Registration failed');
+    }
+  };
+
+  const verifyEmail = async (email: string, otpCode: string): Promise<void> => {
+    try {
+      const response = await authService.verifyEmail(email, otpCode);
+      
+      console.log('AuthContext emailVerify Response:', response);
+
+      if (response && response.status == "success" && response.data) {
+        // const { user: userData, token: authToken, refreshToken } = response.data;
+        const { user: userData, token: authToken } = response.data;
+        // const userData = response.data.user;
+        // const authToken = response.data.token;
+
+        console.log('JSON.stringify: userData', JSON.stringify(userData));
+        // Store auth data
+        await AsyncStorage.setItem(TOKEN_KEY, authToken);
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+
+        setUser(userData);
+        setToken(authToken);
+      
+      }
+
+      //return response;
+
+      // if (response.status == "success" && response.data ) {
+      //   return response;
+
+      // } else {
+      //   throw new Error(response.message || 'Registration failed');
+      // }
+    } catch (error) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.message || 'Registration failed');
+    }
+  };
+
+
   const value: AuthContextType = {
     user,
     token,
@@ -305,10 +290,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     register,
-    emailVerify,
-    emailVerifyResend,
     loginBaas,
     registerBaas,
+    registerLaravel,
+    verifyEmail,
   };
 
   return (

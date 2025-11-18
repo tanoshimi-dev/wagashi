@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export const SignUp: React.FC = () => {
   const navigation = hooks.useAppNavigation();
-  const { registerBaas } = useAuth();
+  const { registerBaas, registerLaravel } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -160,7 +160,9 @@ export const SignUp: React.FC = () => {
         password
       );
 
-      console.log('SignUp Result:', result);
+      const laravelResult = await registerLaravel(result?.idToken ?? '');
+
+      console.log('SignUp laravel result: ', laravelResult);
 
       navigation.navigate(constants.routes.verifyUser, { email: email.toLowerCase().trim() });
 

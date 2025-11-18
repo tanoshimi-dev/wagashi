@@ -18,8 +18,118 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 
+use App\Services\FirebaseService;
+
 class MobileAuthController extends Controller
 {
+
+    protected FirebaseService $firebaseService;
+
+    public function __construct(FirebaseService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+
+    /**
+     * Firebase認証によるログイン/登録
+     */
+    public function firebaseAuth(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_token' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            // Firebase ID Tokenを検証
+            $result = $this->firebaseService->verifyIdToken($request->id_token);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid Firebase token',
+                    'error' => $result['error'],
+                ], 401);
+            }
+
+            // ユーザーを取得または作成
+            $user = User::firstOrCreate(
+                ['email' => $result['email']],
+                [
+                    'name' => $result['claims']['name'] ?? explode('@', $result['email'])[0],
+                    'firebase_uid' => $result['uid'],
+                    'email_verified_at' => $result['email_verified'] ? now() : null,
+                    'password' => Hash::make(Str::random(32)), // ランダムパスワード
+                ]
+            );
+
+            // メール未認証の場合は認証済みにする
+            if (!$user->email_verified_at && $result['email_verified']) {
+                $user->markEmailAsVerified();
+            }
+
+            // 新規ユーザーの場合はウェルカムメールを送信
+            // if ($user->wasRecentlyCreated) {
+            //     $user->notify(new WelcomeEmail());
+            // }
+
+            // トークンを作成
+            // $deviceName = $this->generateDeviceName($request);
+            // $token = $user->createToken(
+            //     name: $deviceName,
+            //     abilities: ['mobile:read', 'mobile:write', 'mobile:update'],
+            //     expiresAt: now()->addDays(30)
+            // );
+
+            // 登録後にメール認証を送信
+            $user->sendMobileEmailVerificationNotification();
+            // 登録イベントを発火（メール認証通知を送信）
+            //event(new Registered($user));
+
+            // デバイス情報を作成
+            $deviceName = $this->generateDeviceName($request);
+            
+            // メール未認証でも使える制限付きトークンを作成
+            $token = $user->createToken(
+                name: $deviceName,
+                abilities: ['mobile:unverified'], // 制限付き権限
+                // abilities: ['mobile:read', 'mobile:write', 'mobile:update'],
+                expiresAt: now()->addDays(7) // 7日間の制限付きアクセス
+            );            
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $user->wasRecentlyCreated ? 'Account created successfully' : 'Login successful',
+                'data' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'email_verified_at' => $user->email_verified_at,
+                        'firebase_uid' => $user->firebase_uid,
+                    ],
+                    'token' => $token->plainTextToken,
+                    'token_type' => 'Bearer',
+                    'expires_at' => $token->accessToken->expires_at?->toISOString(),
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Firebase authentication failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     /**
      * モバイルアプリ用ユーザー登録
      */
