@@ -21,6 +21,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   loginBaas: (email: string, password: string) => Promise<void>;
+  loginLaravel: (idToken: string) => Promise<void>;
   registerBaas: (email: string, password: string) => Promise<void>;
   registerLaravel: (idToken: string) => Promise<void>;
   verifyEmail: (email: string, otpCode: string) => Promise<void>;
@@ -177,10 +178,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // if (response.success && response.data) {
       if (response && response.idToken && response.user) {
+        return response;
+
+      } else {
+        throw new Error(response.message || 'Login failed');
+      }
+    } catch (error) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.message || 'Login failed');
+    }
+  }
+
+  async function loginLaravel(idToken: string): Promise<void> {
+    try {
+      const response = await authService.loginLaravel(idToken);
+      console.log('Login Laravel successful: response', response);
+
+      if (response && response.status == "success" && response.data) {
         // const { user: userData, token: authToken, refreshToken } = response.data;
-        //const { user: userData, token: authToken } = response.data;
-        const userData = response.user;
-        const authToken = response.idToken;
+        const { user: userData, token: authToken } = response.data;
+        // const userData = response.data.user;
+        // const authToken = response.data.token;
 
         console.log('JSON.stringify: userData', JSON.stringify(userData));
         // Store auth data
@@ -189,8 +207,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         setUser(userData);
         setToken(authToken);
-
-
+      
       } else {
         throw new Error(response.message || 'Login failed');
       }
@@ -291,6 +308,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     register,
     loginBaas,
+    loginLaravel,
     registerBaas,
     registerLaravel,
     verifyEmail,

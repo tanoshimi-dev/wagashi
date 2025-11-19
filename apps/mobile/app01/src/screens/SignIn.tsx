@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export const SignIn: React.FC = () => {
   const navigation = hooks.useAppNavigation();
-  const { loginBaas } = useAuth();
+  const { loginBaas, loginLaravel } = useAuth();
   const [loading, setLoading] = useState(false);
   
   const [email, setEmail] = useState('urehop.dev@gmail.com');
@@ -153,11 +153,17 @@ export const SignIn: React.FC = () => {
 
     try {
 
-      await loginBaas(
+      const result = await loginBaas(
         email.toLowerCase().trim(),
         password
       );
 
+
+      const laravelResult = await loginLaravel(result?.idToken ?? '');
+
+      console.log('SignIn laravel result: ', laravelResult);
+
+      
       // Navigation will happen automatically via AuthContext
     } catch (error) {
       console.error('Login error:', error);

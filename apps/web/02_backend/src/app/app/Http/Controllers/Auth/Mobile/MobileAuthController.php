@@ -686,4 +686,94 @@ class MobileAuthController extends Controller
         }
     }
 
+    /**
+     * Firebase認証によるログイン（既存ユーザー）
+     */
+    public function firebaseLogin(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_token' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            // Firebase ID Tokenを検証
+            $result = $this->firebaseService->verifyIdToken($request->id_token);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid Firebase token',
+                    'error' => $result['error'],
+                ], 401);
+            }
+
+            // ユーザーを取得
+            $user = User::where('email', $result['email'])->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User not found. Please register first.',
+                ], 404);
+            }
+
+            // メール認証状態を同期
+            if (!$user->email_verified_at && $result['email_verified']) {
+                $user->markEmailAsVerified();
+            }
+
+            // メール未認証の場合はエラー
+            if (!$user->hasVerifiedEmail()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Please verify your email before signing in.',
+                    'requires_verification' => true,
+                ], 403);
+            }
+
+            // 既存の古いトークンを削除（オプション）
+            $user->tokens()->where('created_at', '<', now()->subDays(30))->delete();
+
+            // 新しいトークンを作成
+            $deviceName = $this->generateDeviceName($request);
+            $token = $user->createToken(
+                name: $deviceName,
+                abilities: ['mobile:read', 'mobile:write', 'mobile:update'],
+                expiresAt: now()->addDays(30)
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Login successful',
+                'data' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'email_verified_at' => $user->email_verified_at,
+                        'firebase_uid' => $user->firebase_uid,
+                    ],
+                    'token' => $token->plainTextToken,
+                    'token_type' => 'Bearer',
+                    'expires_at' => $token->accessToken->expires_at?->toISOString(),
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Login failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

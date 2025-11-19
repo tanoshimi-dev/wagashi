@@ -237,6 +237,35 @@ class AuthService {
 
   }
 
+  async loginLaravel(idToken: string): Promise<any> {
+    try {
+      
+      // Get ID token to send to Laravel backend
+      const response = await this.makeRequest('/firebase-login', {
+        method: 'POST',
+        body: JSON.stringify({ "id_token": idToken }),
+      });
+
+      console.log('User response:', response);
+
+
+      return response;
+
+      // Navigation will happen automatically via AuthContext
+    } catch (error) {
+      console.error('Login error:', error);
+      let errorMessage = 'Invalid credentials. Please try again.';
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = String((error as { message?: string }).message) || errorMessage;
+      }
+    
+    } finally {
+      
+    }
+
+  }
+
+
   async registerFirebaseUser(email: string, password: string): Promise<any> {
     try {
       
