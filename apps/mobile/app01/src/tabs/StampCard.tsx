@@ -1,14 +1,29 @@
-import React from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, Dimensions, Alert} from 'react-native';
 import {constants} from '@/constants';
+import {components} from '@/components';
 
 type Props = {
   completedStamps?: number; // Number of stamps earned (0-20)
 };
 
 export const StampCard: React.FC<Props> = ({completedStamps = 0}) => {
+  const [showScanner, setShowScanner] = useState(false);
   const screenWidth = Dimensions.get('window').width;
   const cellSize = (screenWidth - 60) / 5; // 5 columns with padding
+
+  const handleScan = (data: string) => {
+    Alert.alert(
+      'QRコード読み取り成功',
+      `読み取ったデータ:\n${data}`,
+      [
+        {
+          text: 'OK',
+          onPress: () => setShowScanner(false),
+        },
+      ]
+    );
+  };
   
   const renderStampCell = (index: number) => {
     const isCompleted = index < completedStamps;
@@ -51,6 +66,18 @@ export const StampCard: React.FC<Props> = ({completedStamps = 0}) => {
       <Text style={styles.rewardText}>
         20個集めると特別な商品がもらえます！
       </Text>
+
+      <components.Button
+        title="QRコードを読み取る"
+        onPress={() => setShowScanner(true)}
+        style={styles.scanButton}
+      />
+
+      <components.QRCodeScanner
+        visible={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScan={handleScan}
+      />
     </View>
   );
 };
@@ -100,5 +127,9 @@ const styles = StyleSheet.create({
     color: constants.colors.redColor,
     fontWeight: 'bold',
     ...constants.typography.Roboto_Regular,
+  },
+  scanButton: {
+    marginTop: 20,
+    backgroundColor: constants.colors.redColor,
   },
 });

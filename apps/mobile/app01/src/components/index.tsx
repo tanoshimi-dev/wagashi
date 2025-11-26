@@ -8,6 +8,7 @@ import {RatingStars} from '@/components/RatingStars';
 import {BlockHeading} from '@/components/BlockHeading';
 import {SafeAreaView} from '@/components/SafeAreaView';
 import {RatingStarsReview} from '@/components/RatingStarsReview';
+import {QRCodeScanner} from '@/components/QRCodeScanner';
 
 export const components = {
   Header,
@@ -20,4 +21,5 @@ export const components = {
   BlockHeading,
   SafeAreaView,
   RatingStarsReview,
+  QRCodeScanner,
 };

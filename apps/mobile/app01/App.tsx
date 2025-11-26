@@ -29,7 +29,8 @@ function AppContent() {
   return (
     <NavigationContainer key={isAuthenticated ? 'main' : 'auth'}>
       {!isAuthenticated ? (
-        <AuthStackNavigator />
+        // <AuthStackNavigator />
+        <StackNavigator />
       ) : (
         <StackNavigator />
       )}
