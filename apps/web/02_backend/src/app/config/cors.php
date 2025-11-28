@@ -36,15 +36,23 @@ return [
         'api/*', 
         'sanctum/csrf-cookie', 
         'login', 'logout', 'user', 'forgot-password', 'register', 
-        'admin/*'
+        'admin/*',
+        //'/',
     ],
     'allowed_methods' => ['*'],
-    'allowed_methods' => ['*'],
-    'allowed_origins' => ['*'],
+    //'allowed_origins' => ['*'],
+    // Specify the exact origins that should be allowed (no '*' when supports_credentials = true)
+    'allowed_origins' => [
+        'http://localhost:3000',
+        //'http://127.0.0.1:3000',
+        // add other dev origins as needed, e.g. mobile web ui or your PC lan IP:
+        // 'http://192.168.0.154:3000',
+    ],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
-    'max_age' => 0,
+    'max_age' => 0,    
+    //'supports_credentials' => false,
     'supports_credentials' => true,
 
 ];

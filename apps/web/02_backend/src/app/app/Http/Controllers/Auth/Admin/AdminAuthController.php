@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AdminUser;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -21,23 +22,30 @@ class AdminAuthController extends Controller
             'password' => 'required',
         ]);
 
-        $admin = AdminUser::where('email', $request->email)->first();
+        $adminUser = AdminUser::where('email', $request->email)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if (!$adminUser || !Hash::check($request->password, $adminUser->password)) {
             throw ValidationException::withMessages([
                 'email' => ['メールアドレスまたはパスワードが正しくありません。'],
             ]);
         }
 
         // セッションベースの認証
-        Auth::guard('admin')->login($admin, $request->boolean('remember'));
+        Auth::guard('admin')->login($adminUser, $request->boolean('remember'));
 
         $request->session()->regenerate();
 
-        return response()->json([
-            'message' => 'ログインしました',
-            'admin' => $admin,
-        ]);
+        // return response()->json([
+        //     'message' => 'ログインしました',
+        //     'admin' => $admin,
+        // ]);
+
+        return new JsonResponse([
+            'message'      => 'Authenticated.',
+            // 'access_token' => $access_token,
+            // 'token_type'   => 'Bearer',
+            'user'         => $adminUser,
+        ], 200);        
     }
 
     /**

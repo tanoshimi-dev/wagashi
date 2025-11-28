@@ -10,9 +10,13 @@ import EmulatorDetector from '../constants/EmulatorDetector';
 
 
 const SWEETS_URL = EmulatorDetector.getAPIUrl();
-
+// 物理デバイスから（ローカルPC内の）dockerコンテナへのアドレスは？？
+// PCでifconfigで表示されたen0のinetアドレス。（PC ゲートウェイ 192.168.0.1）
+// スマホのゲートウェイアドレス（スマホゲートウェイ 192.168.0.1）
+//const SWEETS_URL = 'http://192.168.0.154:10011';
 //const SWEETS_URL = 'http://localhost:10011/';
 //const SWEETS_URL = 'http://10.0.2.2:10011/';
+//const SWEETS_URL = 'http://192.168.0.246:10011';
 
 export const GET_SWEETS = `${SWEETS_URL}/api/products`;
 export const GET_SWEETS_DETAIL = `${SWEETS_URL}/api/product`;

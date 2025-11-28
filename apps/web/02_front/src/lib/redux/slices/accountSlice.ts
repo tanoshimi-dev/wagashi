@@ -59,10 +59,10 @@ export const login = createAsyncThunk(
 
       console.log("★API★ login request ", { email, password });
       console.log("★API★ login xsrfToken ", xsrfToken);
-      console.log("★API★ login apiUrl ", `${apiUrl}login`);
+      console.log("★API★ login apiUrl ", `${apiUrl}admin/login`);
       console.log("★API★ login HEADER_NAME_XSRF_TOKEN ", HEADER_NAME_XSRF_TOKEN);
 
-      const response = await fetch(`${apiUrl}login`, {
+      const response = await fetch(`${apiUrl}admin/login`, {
         method: "POST",
         cache: "no-store",
         headers: {

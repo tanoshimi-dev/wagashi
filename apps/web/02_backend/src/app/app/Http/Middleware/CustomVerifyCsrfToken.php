@@ -18,20 +18,23 @@ class CustomVerifyCsrfToken extends Middleware
     ];
     protected function getTokenFromRequest($request)
     {
-
-        $headerName = 'WAGASHI-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
+        // prefer config value (works when config is cached), fallback to env with default
+        $appEnv = config('app.env', env('APP_ENV', 'local'));
+        $headerName = 'WAGASHI-XSRF-TOKEN' . ($appEnv ? '-' . $appEnv : '');
 
         error_log("★★★ headerName: " . $headerName);
         error_log("★★★ getTokenFromRequest called for: " . $request->url());
         error_log("★★★ Method: " . $request->method());
         
         // ヘッダーの詳細をログ出力
+        error_log("★★★ ヘッダーの詳細をログ出力 START");        
         $headers = $request->headers->all();
         foreach ($headers as $key => $value) {
             if (stripos($key, 'csrf') !== false || stripos($key, 'xsrf') !== false) {
                error_log("★★★ Header {$key}: " . json_encode($value));
             }
         }
+        error_log("★★★ ヘッダーの詳細をログ出力 END");        
         
         $token = $request->input('_token') ?: $request->header('X-CSRF-TOKEN');
         error_log("★★★ Token from _token or X-CSRF-TOKEN: " . ($token ?: 'NULL'));
@@ -99,7 +102,9 @@ class CustomVerifyCsrfToken extends Middleware
 
     protected function addCookieToResponse($request, $response)
     {
-        $cookieName = 'WAGASHI-XSRF-TOKEN' . (env('APP_ENV') ? '-' . env('APP_ENV') : '');
+        // prefer config value (works when config is cached), fallback to env with default
+        $appEnv = config('app.env', env('APP_ENV', 'local'));
+        $cookieName = 'WAGASHI-XSRF-TOKEN' . ($appEnv ? '-' . $appEnv : '');
 
         $config = config('session');
         error_log("★★★ cookieName: " . $cookieName);
