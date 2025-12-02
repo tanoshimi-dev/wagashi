@@ -98,7 +98,7 @@ export const getAuthUser = createAsyncThunk("account/user", async () => {
   console.log("★API★ getAuthUser request");
   try {
         
-    const response = await fetch(`${apiUrl}api/user`, {
+    const response = await fetch(`${apiUrl}admin/user`, {
       method: "GET",
       credentials: "include",
     });
@@ -138,7 +138,7 @@ export const logout = createAsyncThunk("account/logout", async () => {
     }
     
 
-    const response = await fetch(`${apiUrl}logout`, {
+    const response = await fetch(`${apiUrl}/admin/logout`, {
       // fetch("https://rehop.jp/demo/trade_back/public/login", {
       method: "POST",
       cache: "no-store",
