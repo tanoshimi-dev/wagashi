@@ -2785,7 +2785,7 @@ SPEC CHECKSUMS:
   React-timing: 42e8212c479d1e956d3024be0a07f205a2e34d9d
   React-utils: a185f723baa0c525c361e6c281a846d919623dbe
   ReactAppDependencyProvider: 8df342c127fd0c1e30e8b9f71ff814c22414a7c0
-  ReactCodegen: 4928682e20747464165effacc170019a18da953c
+  ReactCodegen: d73f02e911bb388e47150d8c098a1336b345629e
   ReactCommon: ec1cdf708729338070f8c4ad746768a782fd9eb1
   ReactNativeCameraKit: 122d74d399694dbb3e72871be72a9339d5d555ca
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
