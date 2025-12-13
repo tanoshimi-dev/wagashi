@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
-import {API_URL_ANDROID, API_URL_ANDROID_EMULATOR, API_URL_IOS, API_URL_IOS_SIMULATOR, ENV} from '@env';
+import { API_URL_ANDROID, API_URL_ANDROID_EMULATOR, API_URL_IOS_SIMULATOR } from '@env';
+import DeviceInfo from 'react-native-device-info';
 
 /**
  * Manual Emulator/Simulator Detection
@@ -12,17 +13,25 @@ class EmulatorDetector {
    */
   static isIOSSimulator() {
     if (Platform.OS !== 'ios') return false;
-    
-    // In iOS, we can check using Platform constants
-    // Simulators typically don't have certain hardware capabilities
-    //const { systemName, brand, model } = Platform.constants;
-    const { systemName } = Platform.constants;
 
-    // Check for simulator-specific indicators
-    // Note: This is not 100% reliable without native modules
-    return __DEV__ && Platform.OS === 'ios';
+    // Prefer synchronous native check if available
+    try {
+      if (typeof (DeviceInfo as any).isEmulatorSync === 'function') {
+        return (DeviceInfo as any).isEmulatorSync();
+      }
+    } catch (e) {
+      // ignore and fallback to heuristic
+    }
+
+    // Fallback heuristic: try multiple possible keys and normalize case
+    const constants: any = Platform.constants || {};
+    const modelRaw =
+      (constants.Model ?? constants.model ?? constants.machine ?? constants.modelName ?? '') + '';
+    const model = modelRaw.toLowerCase();
+
+    // Include arm64 because Apple Silicon simulators can expose arm identifiers
+    return /simulator|x86|i386|x86_64|arm64/.test(model);
   }
-
   /**
    * Check if running on Android Emulator
    * Android emulators have specific brand/model signatures
@@ -30,43 +39,46 @@ class EmulatorDetector {
   static isAndroidEmulator() {
     if (Platform.OS !== 'android') return false;
     
-    const { Brand, Model, Manufacturer } = Platform.constants;
-    
+    const constants: any = Platform.constants || {};
+    const Brand = constants.Brand ?? constants.brand ?? '';
+    const Model = constants.Model ?? constants.model ?? '';
+    const Manufacturer = constants.Manufacturer ?? constants.manufacturer ?? '';
+
     // Common Android emulator signatures
-    const emulatorIndicators = {
-      brands: ['generic', 'google', 'android'],
-      models: [
-        'sdk',
-        'emulator',
-        'android sdk built for x86',
-        'sdk_gphone',
-        'google_sdk',
-        'droid4x',
-        'genymotion',
-        'adt',
-      ],
-      manufacturers: ['genymotion', 'google', 'generic'],
-    };
-    
+     const emulatorIndicators = {
+       brands: ['generic', 'google', 'android'],
+       models: [
+         'sdk',
+         'emulator',
+         'android sdk built for x86',
+         'sdk_gphone',
+         'google_sdk',
+         'droid4x',
+         'genymotion',
+         'adt',
+       ],
+       manufacturers: ['genymotion', 'google', 'generic'],
+     };
+     
     const brandLower = (Brand || '').toLowerCase();
     const modelLower = (Model || '').toLowerCase();
     const manufacturerLower = (Manufacturer || '').toLowerCase();
-    
-    // Check if any emulator indicator matches
-    const isBrandMatch = emulatorIndicators.brands.some(brand =>
-      brandLower.includes(brand)
-    );
-    
-    const isModelMatch = emulatorIndicators.models.some(model =>
-      modelLower.includes(model)
-    );
-    
-    const isManufacturerMatch = emulatorIndicators.manufacturers.some(manufacturer =>
-      manufacturerLower.includes(manufacturer)
-    );
-    
-    return isBrandMatch || isModelMatch || isManufacturerMatch;
-  }
+     
+     // Check if any emulator indicator matches
+     const isBrandMatch = emulatorIndicators.brands.some(brand =>
+       brandLower.includes(brand)
+     );
+     
+     const isModelMatch = emulatorIndicators.models.some(model =>
+       modelLower.includes(model)
+     );
+     
+     const isManufacturerMatch = emulatorIndicators.manufacturers.some(manufacturer =>
+       manufacturerLower.includes(manufacturer)
+     );
+     
+     return isBrandMatch || isModelMatch || isManufacturerMatch;
+   }
 
   /**
    * Check if running on any emulator/simulator
@@ -157,13 +169,13 @@ class EmulatorDetector {
     console.log(`Is Emulator: ${info.isEmulator ? 'YES' : 'NO'}`);
     console.log(`Development Mode: ${info.isDevelopment ? 'YES' : 'NO'}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    
     if (Platform.OS === 'android') {
-      console.log(`Brand: ${Platform.constants.Brand}`);
-      console.log(`Model: ${Platform.constants.Model}`);
-      console.log(`Manufacturer: ${Platform.constants.Manufacturer}`);
+      const constants: any = Platform.constants || {};
+      console.log(`Brand: ${constants.Brand ?? constants.brand ?? ''}`);
+      console.log(`Model: ${constants.Model ?? constants.model ?? ''}`);
+      console.log(`Manufacturer: ${constants.Manufacturer ?? constants.manufacturer ?? ''}`);
     }
-    
+     
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   }
 }

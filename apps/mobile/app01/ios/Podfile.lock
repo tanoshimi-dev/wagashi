@@ -2317,6 +2317,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - RNDeviceInfo (15.0.1):
+    - React-Core
   - RNFBApp (23.5.0):
     - Firebase/CoreOnly (= 12.4.0)
     - React-Core
@@ -2523,6 +2525,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeCameraKit (from `../node_modules/react-native-camera-kit`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -2694,6 +2697,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera-kit"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -2785,11 +2790,12 @@ SPEC CHECKSUMS:
   React-timing: 42e8212c479d1e956d3024be0a07f205a2e34d9d
   React-utils: a185f723baa0c525c361e6c281a846d919623dbe
   ReactAppDependencyProvider: 8df342c127fd0c1e30e8b9f71ff814c22414a7c0
-  ReactCodegen: d73f02e911bb388e47150d8c098a1336b345629e
+  ReactCodegen: 4928682e20747464165effacc170019a18da953c
   ReactCommon: ec1cdf708729338070f8c4ad746768a782fd9eb1
   ReactNativeCameraKit: 122d74d399694dbb3e72871be72a9339d5d555ca
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   RNCAsyncStorage: f30b3a83064e28b0fc46f1fbd3834589ed64c7b9
+  RNDeviceInfo: 36d7f232bfe7c9b5c494cb7793230424ed32c388
   RNFBApp: 255fa19a91d6c1309e021ee75d5d209754e5961b
   RNFBAuth: 7123a71a1fc8dec4aa4e6cb656562661b3ece9f7
   RNScreens: 8132b09d1edf29ba411894b19bb05f25277b2c64

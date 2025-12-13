@@ -23,7 +23,9 @@ function AppContent() {
   // Get device type
   const deviceType = EmulatorDetector.getDeviceType();
   console.log('Device type:', deviceType);
-    
+  EmulatorDetector.logDeviceInfo();
+
+  ;
   const { isAuthenticated } = useAuth();
 
   return (
